@@ -6,6 +6,7 @@ import java.util.Map;
 
 /**
  * From: https://blog.csdn.net/u013013024/article/details/80452019
+ * 使用 scala.collection.JavaConverters 与Java集合交互。它有一系列的隐式转换，添加了asJava和asScala的转换方法。
  */
 public class JavaScalaBiTransfer {
 
