@@ -1,4 +1,4 @@
-package concurrentdemo;
+package concurrent;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;

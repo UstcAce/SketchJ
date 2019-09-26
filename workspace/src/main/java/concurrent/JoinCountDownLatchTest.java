@@ -1,4 +1,4 @@
-package concurrentdemo;
+package concurrent;
 
 public class JoinCountDownLatchTest {
     public static void main(String[] args) throws InterruptedException {
