@@ -1,4 +1,4 @@
-package javabasics;
+package basics;
 
 import commons.Tuple2;
 import org.junit.Test;

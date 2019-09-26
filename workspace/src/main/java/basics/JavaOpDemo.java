@@ -1,4 +1,4 @@
-package javabasics;
+package basics;
 
 import org.junit.Test;
 
