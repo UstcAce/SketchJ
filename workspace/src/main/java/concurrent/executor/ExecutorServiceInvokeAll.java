@@ -1,5 +1,6 @@
 package concurrent.executor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -11,13 +12,13 @@ import java.util.concurrent.*;
  */
 public class ExecutorServiceInvokeAll {
     public static void main(String[] args) throws InterruptedException, ExecutionException {
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        ExecutorService executorService = Executors.newFixedThreadPool(5);
 
-        Set<Callable<String>> callables = new HashSet<>();
+        List<Callable<String>> callables = new ArrayList<>();
 
         Callable<String> c1 = () -> {
             long start = System.currentTimeMillis();
-            while ((System.currentTimeMillis() - start) < 1000) {
+            while ((System.currentTimeMillis() - start) < 3000) {
 
             }
             return "Task1";
@@ -33,7 +34,7 @@ public class ExecutorServiceInvokeAll {
 
         Callable<String> c3 = () -> {
             long start = System.currentTimeMillis();
-            while ((System.currentTimeMillis() - start) < 3000) {
+            while ((System.currentTimeMillis() - start) < 1000) {
 
             }
             return "Task3";
@@ -63,8 +64,7 @@ public class ExecutorServiceInvokeAll {
 //                return "Task 3";
 //            }
 //        });
-        // 这里包含多线程任务的开启以及所有线程任务的结束及返回
-        // TODO: 这里集合中Future的结果和callables的顺序不一定是对应的
+        // 这里包含多线程任务的开启以及所有线程任务的结束及返回,Future的结果顺序与callables的顺序一致
         List<Future<String>> result = executorService.invokeAll(callables);
 
         for (Future<String> future : result) {
