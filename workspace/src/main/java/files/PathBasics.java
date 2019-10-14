@@ -12,6 +12,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
+import java.util.stream.Stream;
 
 /**
  * Path表示的是一个目录名序列，其后还可以跟着一个文件名。
@@ -114,5 +115,38 @@ public class PathBasics {
 
         Path newPath = Files.copy(path, pathCopy);
         System.out.println("New Path:" + newPath.toString());
+    }
+
+    // 深度优先遍历目录树
+    @Test
+    public void test06() throws IOException {
+        Path path = Paths.get("D:\\Javacodes\\SketchJ\\workspace\\src\\main\\java");
+
+        Stream<Path> oneDepth = Files.walk(path, 1);
+
+        oneDepth.forEach(System.out::println);
+
+        Stream<Path> oneDepth2 = Files.walk(path, 1)
+                .filter(path2 -> !path2.equals(path))
+//                .map(Path::getFileName);
+                .map(path::relativize);
+        /**
+         * basics
+         * commons
+         * concurrent
+         * files
+         */
+
+        oneDepth2.forEach(System.out::println);
+    }
+
+    @Test
+    public void test07() {
+        Path path = Paths.get("D:\\Javacodes\\SketchJ\\workspace\\src\\main\\java");
+        Path newPath = path.resolve("\\foo");
+        System.out.println("newPath:" + newPath);
+
+        Path newPath2 = path.resolve(path);
+        System.out.println("newPath2:" + newPath2);
     }
 }
