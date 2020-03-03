@@ -43,7 +43,6 @@ public class Q92ReverseList {
                 iter = iter.next;
                 i ++;
             } else {
-
                 if (i == m) {
                     subHead = iter;
                 }
