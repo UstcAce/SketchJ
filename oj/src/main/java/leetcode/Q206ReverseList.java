@@ -10,13 +10,12 @@ public class Q206ReverseList {
         }
 
         ListNode pre = null;
-        ListNode tmp;
-        ListNode iter = head;
-        while (iter != null) {
-            tmp = iter.next;
-            iter.next = pre;
-            pre = iter;
-            iter = tmp;
+        ListNode curr = head;
+        while (curr != null) {
+            ListNode next = curr.next;
+            curr.next = pre;
+            pre = curr;
+            curr = next;
         }
         return pre;
     }
