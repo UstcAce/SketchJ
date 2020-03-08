@@ -73,10 +73,39 @@ public class Q419BattleShip {
         return count;
     }
 
+    public int countBattleships2(char[][] board) {
+        int row = board.length;
+        int col = board[0].length;
+        int count = 0;
+
+        for (int i=0; i<row; i++) {
+            for (int j=0;j<col; j++) {
+                if (board[i][j] == 'X') {
+                    count += 1;
+                    dfs(i, j, board);
+                }
+            }
+        }
+        return count;
+    }
+
+    private void dfs(int i, int j, char[][] board) {
+        int row = board.length;
+        int col = board[0].length;
+        if (i<0 || i>=row || j<0 || j>=col || board[i][j]!='X') {
+            return;
+        }
+        board[i][j] = '*';
+        dfs(i-1, j, board);
+        dfs(i+1, j, board);
+        dfs(i, j-1, board);
+        dfs(i, j+1, board);
+    }
+
     @Test
     public void testCase01() {
         char[][] input = {{'X','.','.','X'},{'.','.','.','X'},{'.','.','.','X'}};
-        System.out.println(countBattleships(input));
+        System.out.println(countBattleships2(input));
     }
 
     @Test
@@ -87,6 +116,6 @@ public class Q419BattleShip {
                 {'.','.','.','.','X'},
                 {'X','.','X','X','.'},
                 {'X','.','.','.','X'}};
-        System.out.println(countBattleships(input));
+        System.out.println(countBattleships2(input));
     }
 }
