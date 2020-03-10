@@ -19,10 +19,6 @@ public class Q543DiameterOfBinaryTree {
     }
 
     private int calcHeight(TreeNode root) {
-        if (root == null) {
-            return 0;
-        }
-
         int left = 0;
         int right = 0;
         if (root.left != null && root.right != null) {
