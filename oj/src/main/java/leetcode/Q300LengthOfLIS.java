@@ -19,32 +19,45 @@ import java.util.LinkedList;
  * 你算法的时间复杂度应该为 O(n2) 。
  */
 public class Q300LengthOfLIS {
+
+    /**
+     * 1. 定义动态规划求解问题，dp[i]表示确定以第i个数字结束的最长上升子序列的长度
+     * 2. 状态转移方程
+     * (1) dp[i] = Max(dp[j] + 1),  0 <= j < i < len 且 nums[i] > nums[j]
+     * (2) dp[i] = 1
+     * (3) 边界条件 dp[0] = 1
+     * 时间复杂度O(n^2) 空间复杂度O(n)
+     */
     public int lengthOfLIS(int[] nums) {
         int len = nums.length;
         if (len == 0) {
             return 0;
         }
 
-        int max = 0;
+        int max = 1;
         int[] dp = new int[len];
-        // 结束于i的最长子序列至少长度为1
         Arrays.fill(dp, 1);
+
         for (int i = 0; i < len; i++) {
             for (int j = 0; j < i; j++) {
                 if (nums[i] > nums[j]) {
+                    // 这里可以记录多少次到达dp[i]的最大值
                     if (dp[j] + 1 > dp[i]) {
                         dp[i] = dp[j] + 1;
                     }
                 }
             }
-            max = Math.max(max, dp[i]);
+            max = Math.max(dp[i], max);
         }
-
         return max;
     }
 
     /**
-     * https://blog.csdn.net/lxt_Lucia/article/details/81206439
+     * 维护一个low列表表示nums[]中的最慢上升序列，遍历nums
+     * 对于一个nums[i], 若
+     * 1. nums[i] > low列表的最后一个元素（即大于low中的所有元素），就讲其接到low的后面
+     * 2. 否则，二分查找low列表中第一个大于等于nums[i]的数值并替换它 (low是一个增序序列)
+     * 3. 最终的结果 = low列表的长度
      */
     public int lengthOfLIS2(int[] nums) {
         int len = nums.length;
@@ -54,38 +67,30 @@ public class Q300LengthOfLIS {
 
         LinkedList<Integer> low = new LinkedList<>();
         for (int i = 0; i < len; i++) {
-            updateLowList(low, nums[i]);
+            int ele = nums[i];
+            if (low.isEmpty() || ele > low.getLast()) {
+                low.add(ele);
+            } else {
+                int idx = binarySearchLargerEleIndex(low, ele);
+                low.set(idx, ele);
+            }
         }
 
         return low.size();
-    }
-
-    private void updateLowList(LinkedList<Integer> low, int val) {
-        if (low.isEmpty()) {
-            low.add(val);
-        } else {
-            if (val > low.getLast()) {
-                low.add(val);
-            } else {
-                // 二分查找第一个大于等于val的数值，并替换它
-                int idx = binarySearchLargerEleIndex(low, val);
-                low.set(idx, val);
-            }
-        }
     }
 
     private int binarySearchLargerEleIndex(LinkedList<Integer> low, int val) {
         int left = 0;
         int right = low.size() - 1;
         while (left <= right) {
-            int mid = (right + left) / 2;
-            if (low.get(mid) < val) {
+            int mid = (left + right) / 2;
+            int ele = low.get(mid);
+            if (ele < val) {
                 left = mid + 1;
             } else {
                 right = mid - 1;
             }
         }
-
         return left;
     }
 
