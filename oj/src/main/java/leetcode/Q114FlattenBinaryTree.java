@@ -28,7 +28,42 @@ import common.TreeNode;
  *
  */
 public class Q114FlattenBinaryTree {
+    private TreeNode last;
     public void flatten(TreeNode root) {
+        last = null;
+        preOrderTraversal(root);
+    }
+
+    /**
+     * 递归前序遍历 二叉树 根-左-右 先序遍历
+     */
+    private void preOrderTraversal(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+
+        TreeNode left = root.left;
+        TreeNode right = root.right;
+
+        if (last == null) {
+            last = root;
+        } else {
+            last.right = root;
+            last = root;
+            root.left = null;
+            root.right = null;
+        }
+
+        preOrderTraversal(left);
+
+        preOrderTraversal(right);
+    }
+
+
+    /**
+     * 递归解法，二叉树 根-左-右 先序遍历
+     */
+    public void flatten2(TreeNode root) {
         flattenTree(root);
     }
 
