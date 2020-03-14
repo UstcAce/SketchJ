@@ -29,22 +29,22 @@ public class Q94InOrderTraversal {
      * 迭代解法，使用堆栈
      */
     public List<Integer> inorderTraversal(TreeNode root) {
-        List<Integer> result = new ArrayList<>();
-        Stack<TreeNode> stack = new Stack<>();
-        TreeNode iter = root;
-        while (iter != null || !stack.empty()) {
-            if (iter != null) {
-                stack.push(iter);
-                iter = iter.left;
-            } else {
-                TreeNode node = stack.pop();
-                result.add(node.val);
-                if (node.right != null) {
-                    iter = node.right;
-                }
-            }
+        if (root == null) {
+            return new ArrayList<>();
         }
 
-        return result;
+        List<Integer> res = new ArrayList<>();
+        TreeNode iter = root;
+        Stack<TreeNode> stack = new Stack<>();
+        while (iter != null || !stack.isEmpty()) {
+            while (iter != null) {
+                stack.push(iter);
+                iter = iter.left;
+            }
+            TreeNode pop = stack.pop();
+            res.add(pop.val);
+            iter = pop.right;
+        }
+        return res;
     }
 }
