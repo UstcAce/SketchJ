@@ -2,9 +2,7 @@ package leetcode;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * 给定一个没有重复数字的序列，返回其所有可能的全排列。
@@ -24,6 +22,39 @@ import java.util.List;
  *
  */
 public class Q46Permutations {
+    private List<List<Integer>> result = new ArrayList<>();
+
+    private int len;
+
+    private boolean[] visit;
+    /**
+     * 回溯解法
+     */
+    public List<List<Integer>> permute2(int[] nums) {
+        len = nums.length;
+        visit = new boolean[len];
+        if (len == 0) return result;
+
+        traceBackPermute(new ArrayList<>(), nums);
+        return result;
+    }
+
+    private void traceBackPermute(List<Integer> tmp, int[] nums) {
+        if (tmp.size() == len) {
+            result.add(new ArrayList<>(tmp));
+            return;
+        }
+
+        for (int i = 0; i < len; i++) {
+            if (visit[i]) continue;
+            visit[i] = true;
+            tmp.add(nums[i]);
+            traceBackPermute(tmp, nums);
+            visit[i] = false;
+            tmp.remove(tmp.size() - 1);
+        }
+    }
+
     /**
      * 1. 定义动态规划求解问题dp[n]，表示前i个数字组合的结果
      * 2. 状态转移方程dp[n]，考虑dp[n-1]的解已经知道了，那么第n个字母
@@ -73,7 +104,7 @@ public class Q46Permutations {
     @Test
     public void testCase01() {
         int[] nums = {1, 2, 3};
-        List<List<Integer>> result = permute(nums);
+        List<List<Integer>> result = permute2(nums);
         for (List<Integer> list : result) {
             System.out.println(list);
         }
