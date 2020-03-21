@@ -29,6 +29,46 @@ import java.util.List;
  */
 public class Q78Subsets {
 
+    private List<List<Integer>> result = new ArrayList<>();
+
+    private boolean[] visit;
+
+    private int len;
+
+    public List<List<Integer>> subsets2(int[] nums) {
+        len = nums.length;
+        if (len == 0) return result;
+        visit = new boolean[len];
+        traceBackSubset(new ArrayList<>(), nums, 0);
+        return result;
+    }
+
+    private void traceBackSubset(List<Integer> tmp, int[] nums, int pos) {
+        if (allVisit()) {
+            result.add(new ArrayList<>(tmp));
+            return;
+        }
+
+        for (int i = pos; i < len; i++) {
+            if (visit[i]) continue;
+            tmp.add(nums[i]);
+            visit[i] = true;
+            traceBackSubset(tmp, nums, i);
+            tmp.remove(tmp.size() - 1);
+
+            traceBackSubset(tmp, nums, i);
+            visit[i] = false;
+        }
+    }
+
+    private boolean allVisit() {
+        boolean res = true;
+        for (boolean b : visit) {
+            res = res && b;
+        }
+        return res;
+    }
+
     /**
      * 1. 定义动态规划问题 dp[i] 表示前i个数字的非空子集
      * 2. 状态转移方程 dp[i]的子集等于
@@ -66,7 +106,7 @@ public class Q78Subsets {
     @Test
     public void testCase01() {
         int[] nums = {1, 2, 3};
-        List<List<Integer>> res = subsets(nums);
+        List<List<Integer>> res = subsets2(nums);
         for (List<Integer> list : res) {
             System.out.println(list);
         }
