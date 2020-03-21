@@ -23,67 +23,27 @@ import java.util.*;
 public class Q90SubsetsWithDup {
     private List<List<Integer>> result = new ArrayList<>();
 
-    private boolean[] visit;
-
     private int len;
 
     public List<List<Integer>> subsetsWithDup(int[] nums) {
         len = nums.length;
         if (len == 0) return result;
-        visit = new boolean[len];
+        Arrays.sort(nums);
         traceBackSubset(new ArrayList<>(), nums, 0);
-        return calcUniqueList();
+        return result;
     }
 
     private void traceBackSubset(List<Integer> tmp, int[] nums, int pos) {
-        if (allVisit()) {
-            result.add(new ArrayList<>(tmp));
-            return;
-        }
-
+        result.add(new ArrayList<>(tmp));
         for (int i = pos; i < len; i++) {
-            if (visit[i]) continue;
-
-            tmp.add(nums[i]);
-            visit[i] = true;
-            traceBackSubset(tmp, nums, i);
-            tmp.remove(tmp.size() - 1);
-
-            traceBackSubset(tmp, nums, i);
-            visit[i] = false;
-        }
-    }
-
-    private boolean allVisit() {
-        boolean res = true;
-        for (boolean b : visit) {
-            res = res && b;
-        }
-        return res;
-    }
-
-    private List<List<Integer>> calcUniqueList() {
-        List<List<Integer>> uniques = new ArrayList<>();
-        Set<String> set = new HashSet<>();
-
-        for (List<Integer> list : result) {
-            String hashCode = calcHashCode(list);
-            if (!set.contains(hashCode)) {
-                set.add(hashCode);
-                uniques.add(list);
+            // 和上个数字相等就跳过
+            if (i > pos && nums[i] == nums[i - 1]) {
+                continue;
             }
+            tmp.add(nums[i]);
+            traceBackSubset(tmp, nums, i + 1);
+            tmp.remove(tmp.size() - 1);
         }
-
-        return uniques;
-    }
-
-    private String calcHashCode(List<Integer> list) {
-        StringBuilder sb = new StringBuilder();
-        for (int val : list) {
-            sb.append(val);
-        }
-
-        return sb.toString();
     }
 
     @Test
