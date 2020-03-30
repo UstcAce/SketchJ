@@ -23,6 +23,58 @@ import org.junit.Test;
  *
  */
 public class Q121MaxProfit {
+    /**
+     * 1.定义动态规划问题 dp[i][j][s]表示第i天，最多允许交易j次的情况下，s状态下的利润
+     *   0 <= i < len, 1 <= j <= K, s = {0, 1}, 0表示没持有，1表示持有
+     * 2. 状态转移方程
+     *  dp[i][k][0], 第i天空仓的收益
+     *  (1) 第i-1天空仓,                dp[i-1][k][0]
+     *  (2) 第i-1天持仓，第i天卖了       dp[i-1][k][1]+prices[i]
+     *  dp[i][k][1]，第i天持仓的收益
+     *  (1) 第i-1天持仓,                dp[i-1][k][1]
+     *  (2) 第i-1天空仓，第i天买了       dp[i-1][k-1][0]-prices[i]
+     *  3.边界条件
+     *  dp[-1][k][0] = 0
+     *  dp[-1][k][1] = -inf
+     *  dp[i][0][0] = 0
+     *  dp[i][0][1] = -inf
+     *
+     *  k = 1时
+     *  dp[i][0] = Max(dp[i-1][0], dp[i-1][1]+prices[i])
+     *  dp[i][1] = Max(dp[i-1][1], -prices[i])
+     */
+    public int maxProfit0(int[] prices) {
+        int len = prices.length;
+        if (len <= 1) return 0;
+        int[][] dp = new int[len][2];
+        dp[0][0] = 0;
+        dp[0][1] = -prices[0];
+
+        for (int i = 1; i < len; i++) {
+            dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]);
+            dp[i][1] = Math.max(dp[i - 1][1], 0 - prices[i]);
+        }
+
+        return dp[len - 1][0];
+    }
+
+    /**
+     * dp空间数组，O(n) -> O(1)
+     */
+    public int maxProfit01(int[] prices) {
+        int len = prices.length;
+        if (len <= 1) return 0;
+        int dpi0 = 0;
+        int dpi1 = -prices[0];
+
+        for (int i = 1; i < len; i++) {
+
+            dpi0 = Math.max(dpi0, dpi1 + prices[i]);
+            dpi1 = Math.max(dpi1, 0 - prices[i]);
+        }
+
+        return dpi0;
+    }
 
     public int maxProfit(int[] prices) {
         int len = prices.length;
@@ -53,6 +105,6 @@ public class Q121MaxProfit {
     @Test
     public void testCase01() {
         int [] input = {7,1,5,3,6,4};
-        System.out.println(maxProfit2(input));
+        System.out.println(maxProfit01(input));
     }
 }
