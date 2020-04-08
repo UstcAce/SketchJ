@@ -40,11 +40,8 @@ public class Q300LengthOfLIS {
 
         for (int i = 0; i < len; i++) {
             for (int j = 0; j < i; j++) {
-                if (nums[i] > nums[j]) {
-                    // 这里可以记录多少次到达dp[i]的最大值
-                    if (dp[j] + 1 > dp[i]) {
-                        dp[i] = dp[j] + 1;
-                    }
+                if (nums[i] > nums[j] && dp[j] + 1 > dp[i]) {
+                    dp[i] = dp[j] + 1;
                 }
             }
             max = Math.max(dp[i], max);
@@ -53,7 +50,7 @@ public class Q300LengthOfLIS {
     }
 
     /**
-     * 维护一个low列表表示nums[]中的最慢上升序列，遍历nums
+     * 维护一个slow列表表示nums[]中的最慢上升序列，遍历nums
      * 对于一个nums[i], 若
      * 1. nums[i] > low列表的最后一个元素（即大于low中的所有元素），就讲其接到low的后面
      * 2. 否则，二分查找low列表中第一个大于等于nums[i]的数值并替换它 (low是一个增序序列)
@@ -65,18 +62,18 @@ public class Q300LengthOfLIS {
             return 0;
         }
 
-        LinkedList<Integer> low = new LinkedList<>();
+        LinkedList<Integer> slow = new LinkedList<>();
         for (int i = 0; i < len; i++) {
             int ele = nums[i];
-            if (low.isEmpty() || ele > low.getLast()) {
-                low.add(ele);
+            if (slow.isEmpty() || ele > slow.getLast()) {
+                slow.add(ele);
             } else {
-                int idx = binarySearchLargerEleIndex(low, ele);
-                low.set(idx, ele);
+                int idx = binarySearchLargerEleIndex(slow, ele);
+                slow.set(idx, ele);
             }
         }
 
-        return low.size();
+        return slow.size();
     }
 
     private int binarySearchLargerEleIndex(LinkedList<Integer> low, int val) {
