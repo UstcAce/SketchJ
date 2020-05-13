@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * 序列化是将一个数据结构或者对象转换为连续的比特位的操作，进而可以将转换后的数据存储在一个文件或者内存中，同时也可以通过网络传输到另一个计算机环境，采取相反方式重构得到原数据。
@@ -14,133 +15,111 @@ import java.util.List;
  */
 public class Q297SerializeAndDeserializeBinaryTree {
 
-    public String serialize2(TreeNode root) {
-        StringBuilder res = mySeri(root, new StringBuilder());
+    public String serialize(TreeNode root) {
+        StringBuilder res = inOrderNonRecur(root, new StringBuilder());
         return res.toString();
     }
 
-    StringBuilder mySeri(TreeNode root, StringBuilder sb) {
+    /**
+     * 前序遍历，根-左-右
+     *     1
+     *    / \
+     *   2   3
+     *      / \
+     *     4   5
+     * 1,2,null,null,3,4,null,5,null,null
+     */
+    StringBuilder preOrderRecur(TreeNode root, StringBuilder sb) {
         if (root == null) {
             sb.append("null,");
             return sb;
-        } else if (root != null) {
+        } else {
             sb.append(root.val);
             sb.append(",");
 
-            mySeri(root.left, sb);
-            mySeri(root.right, sb);
+            preOrderRecur(root.left, sb);
+            preOrderRecur(root.right, sb);
+        }
+        return sb;
+    }
+
+    StringBuilder preOrderNonRecur(TreeNode root, StringBuilder sb) {
+        Stack<TreeNode> stack = new Stack<>();
+        stack.add(root);
+
+        while (!stack.isEmpty()) {
+            TreeNode pop = stack.pop();
+            sb.append(pop == null ? "null" : pop.val).append(",");
+            if (pop == null) continue;
+            stack.add(pop.right);
+            stack.add(pop.left);
+        }
+
+        return sb;
+    }
+
+    /**
+     * 中序遍历，左-根-右
+     *     1
+     *    / \
+     *   2   3
+     *      / \
+     *     4   5
+     * null,2,null,1,null,4,null,3,null,5,null
+     */
+    StringBuilder inOrderNonRecur(TreeNode root, StringBuilder sb) {
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode iter = root;
+        sb.append("null").append(",");
+        while (iter != null || !stack.isEmpty()) {
+            while (iter != null) {
+                stack.add(iter);
+                iter = iter.left;
+            }
+            TreeNode pop = stack.pop();
+            sb.append(pop.val).append(",null,");
+            iter = pop.right;
         }
         return sb;
     }
 
     // Decodes your encoded data to tree.
-    public TreeNode deserialize2(String data) {
+    public TreeNode deserialize(String data) {
         String[] temp = data.split(","); // 将序列化的结果转为字符串数组
         List<String> list = new LinkedList<>(Arrays.asList(temp)); // 字符串数组转为集合类 便于操作
-        return myDeSeri(list);
+        return inOrderDeser(list);
     }
 
-    public TreeNode myDeSeri(List<String> list) {
+    /**
+     * 反前序遍历的序列化
+     */
+    public TreeNode preOrderDeser(List<String> list) {
         TreeNode root;
         if (list.get(0).equals("null")) {
             list.remove(0); // 删除第一个元素 则第二个元素成为新的首部 便于递归
             return null;
         } else {
-            root = new TreeNode(Integer.valueOf(list.get(0)));
-            list.remove(0);
-            root.left = myDeSeri(list);
-            root.right = myDeSeri(list);
+            root = new TreeNode(Integer.parseInt(list.get(0)));
+            root.left = preOrderDeser(list);
+            root.right = preOrderDeser(list);
         }
         return root;
     }
 
-
-    class NodeWithDepth {
-        public TreeNode node;
-        public int depth;
-
-        public NodeWithDepth(TreeNode node, int depth) {
-            this.node = node;
-            this.depth = depth;
-        }
-    }
-
-    public String serialize(TreeNode root) {
-        if (root == null) return "";
-        int maxDepth = calcMaxDepth(root, 1);
-        LinkedList<NodeWithDepth> list = new LinkedList<>(Arrays.asList(new NodeWithDepth(root, 1)));
-        StringBuilder sb = new StringBuilder();
-        while (!list.isEmpty()) {
-            NodeWithDepth pop = list.pop();
-            int depth = pop.depth;
-            sb.append(pop.node.val).append(" ");
-            if (depth != maxDepth) {
-                TreeNode left = pop.node.left;
-                TreeNode right = pop.node.right;
-
-                if (left != null) {
-                    list.add(new NodeWithDepth(left, depth + 1));
-                } else {
-                    list.add(new NodeWithDepth(new TreeNode(Integer.MAX_VALUE), depth + 1));
-                }
-
-                if (right != null) {
-                    list.add(new NodeWithDepth(right, depth + 1));
-                } else {
-                    list.add(new NodeWithDepth(new TreeNode(Integer.MAX_VALUE), depth + 1));
-                }
-            }
-        }
-
-        return sb.toString();
-    }
-
-    private int calcMaxDepth(TreeNode root, int depth) {
-        TreeNode left = root.left;
-        TreeNode right = root.right;
-
-        if (left != null && right != null) {
-            return Math.max(calcMaxDepth(left, depth + 1), calcMaxDepth(right, depth + 1));
-        } else if (left != null) {
-            return calcMaxDepth(left, depth + 1);
-        } else if (right != null) {
-            return calcMaxDepth(right, depth + 1);
-        } else {
-            return depth;
-        }
-    }
-
-    public TreeNode deserialize(String data) {
-        if (data.isEmpty()) return null;
-        String[] arr = data.split(" ");
-        int len = arr.length;
-        TreeNode[] nodeArr = new TreeNode[len];
-        for (int i = 0; i < len; i++) {
-            int num = Integer.parseInt(arr[i]);
-            if (num != Integer.MAX_VALUE) {
-                nodeArr[i] = new TreeNode(num);
-            }
-        }
-
-        for (int i = 0; i <= len / 2 - 1; i++) {
-            TreeNode node = nodeArr[i];
-            if (node != null) {
-                TreeNode left = nodeArr[2 * i + 1];
-                TreeNode right = nodeArr[2 * i + 2];
-                node.left = left;
-                node.right = right;
-            }
-        }
-
-        return nodeArr[0];
+    /**
+     * 反中序遍历的序列化
+     * 左-根-右
+     */
+    public TreeNode inOrderDeser(List<String> list) {
+        return null;
     }
 
     /**
-     * 1
-     * / \
-     * 2   3
-     * / \
-     * 4   5
+     *     1
+     *    / \
+     *   2   3
+     *      / \
+     *     4   5
      */
     @Test
     public void testCase01() {
@@ -155,21 +134,9 @@ public class Q297SerializeAndDeserializeBinaryTree {
         node3.left = node4;
         node3.right = node5;
 
-        System.out.println(calcMaxDepth(node1, 1));
-        String res = serialize(node1);
-        System.out.println(serialize(node1));
-
-        System.out.println(deserialize(res));
-
-        System.out.println();
-    }
-
-    @Test
-    public void testCase02() {
-        TreeNode node1 = new TreeNode(1);
-
         String res = serialize(node1);
         System.out.println(res);
 
+        System.out.println(deserialize(res));
     }
 }
