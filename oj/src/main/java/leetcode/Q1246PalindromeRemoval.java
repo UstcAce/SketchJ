@@ -20,31 +20,30 @@ import org.junit.Test;
  */
 public class Q1246PalindromeRemoval {
     /**
-     * 1. 定义动态规划求解问题：dp[i][j]表示从下标i到下标j即区间[i, j]删除所有数字的最小操作次数
-     * 2. dp[i][j] (注意状态转移顺序)
-     * (1) arr[i] == arr[j], dp[i][j] = min(dp[i+1][j-1], dp[i][k] + dp[k+1][j]), i <= k < j
-     * (2) arr[i] != arr[j], dp[i][j] = min(j-i+1, dp[i][k] + dp[k+1][j]), i <= k < j
-     * 3. 边界条件dp[i][i] = 1, dp[i][i+1] = arr[i] == arr[i+1] ? 2 : 1
+     * 1. 定义动态规划求解问题 dp[i][j]表示从arr[i]~arr[j]删除所有数字的最小操作次数
+     * 2. 状态转移方程 dp[i][j] i <= j
+     * (1) j <= i + 1; dp[i][j] = arr[i] == arr[j] ? 1 : 2
+     * (2) arr[i] == arr[j]; dp[i][j] = min(dp[i+1][j-1], dp[i][k] + dp[k+1][j]); i <= k < j
+     * (3) arr[i] != arr[j]; dp[i][j] = min(dp[i][k] + dp[k+1][j]); i <= k < j
+     * 3. 递推方向：
+     * (1) dp[i+1][j-1] ->  dp[i][j] 从左下指向递推点
+     * (2) dp[i][k] -> dp[i][j]; i <= k < j 从左边指向递推点
+     * (3) dp[k+1][j] -> dp[i][j]; i <= k < j 从下方指向递推点
      */
     public int minimumMoves(int[] arr) {
-        if (arr == null || arr.length == 0) return 0;
-        if (arr.length == 1) return 1;
         int len = arr.length;
         int[][] dp = new int[len][len];
-
-        for (int j = 0; j < len; j++) {
-            for (int i = j; i >= 0; i--) {
-                if (i == j) {
-                    dp[i][j] = 1;
-                } else if (i + 1 == j) {
+        for (int i = len - 1; i >= 0; i--) {
+            for (int j = i; j < len; j++) {
+                if (j <= i + 1) {
                     dp[i][j] = arr[i] == arr[j] ? 1 : 2;
                 } else {
-                    int min = j - i + 1;
-                    if (arr[i] == arr[j]) {
-                        min = Math.min(min, dp[i + 1][j - 1]);
-                    }
+                    int min = Integer.MAX_VALUE;
                     for (int k = i; k < j; k++) {
-                        min = Math.min(min, dp[i][k] + dp[k+1][j]);
+                        min = Math.min(min, dp[i][k] + dp[k + 1][j]);
+                    }
+                    if (arr[i] == arr[j]) {
+                        min = Math.min(dp[i + 1][j - 1], min);
                     }
                     dp[i][j] = min;
                 }
