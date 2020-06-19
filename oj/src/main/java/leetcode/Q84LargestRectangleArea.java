@@ -4,8 +4,14 @@ import org.junit.Test;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Stack;
+import java.util.LinkedList;
 
+/**
+ * 给定 n 个非负整数，用来表示柱状图中各个柱子的高度。每个柱子彼此相邻，且宽度为 1 。
+ * 求在该柱状图中，能够勾勒出来的矩形的最大面积。
+ *
+ * 面积 = 高度 * 长度，固定高度，确定长度
+ */
 public class Q84LargestRectangleArea {
     public int largestRectangleArea2(int[] heights) {
         int len = heights.length;
@@ -59,34 +65,49 @@ public class Q84LargestRectangleArea {
         return res;
     }
 
+    /**
+     * 维护一个单调递减的栈
+     */
     public int largestRectangleArea3(int[] heights) {
         int len = heights.length;
         if (len == 0) return 0;
 
-        int res = 0;
-
-        int[] newHeights = new int[len + 2];
-        System.arraycopy(heights, 0, newHeights, 1, len);
-        len += 2;
-        heights = newHeights;
-
-        Stack<Integer> stack = new Stack<>();
-        stack.add(0);
-
-        for (int i = 1; i < len; i++) {
-            while (heights[i] < heights[stack.peek()]) {
-                int curHeight = heights[stack.pop()];
-                int curWidth = i - stack.peek() - 1;
-                res = Math.max(res, curHeight * curWidth);
+        int maxArea = 0;
+        // 维护一个下标栈，其对应的高度单调递减
+        LinkedList<Integer> stack = new LinkedList<>();
+        for (int i = 0; i < len; i++) {
+            while (!stack.isEmpty() && heights[i] < heights[stack.peekLast()]) {
+                int popIdx = stack.pollLast();
+                int currHeight = heights[popIdx];
+                int currWidth;
+                if (stack.isEmpty()) {
+                    currWidth = i;
+                } else {
+                    currWidth = i - stack.peekLast() - 1;
+                }
+                maxArea = Math.max(maxArea, currWidth * currHeight);
             }
-            stack.add(i);
+            stack.addLast(i);
         }
-        return res;
+
+        while (!stack.isEmpty()) {
+            int popIdx = stack.pollLast();
+            int currHeight = heights[popIdx];
+            int currWidth;
+            if (stack.isEmpty()) {
+                currWidth = len;
+            } else {
+                currWidth = len - stack.peekLast() - 1;
+            }
+            maxArea = Math.max(maxArea, currWidth * currHeight);
+        }
+
+        return maxArea;
     }
 
     @Test
     public void testCase01() {
-         int[] heights = {2, 1, 5, 6, 2, 3};
+         int[] heights = {5,4,1,2};
 //        int[] heights = {1, 1};
         int res = largestRectangleArea(heights);
         System.out.println(res);
