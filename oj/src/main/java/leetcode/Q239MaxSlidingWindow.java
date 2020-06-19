@@ -5,60 +5,71 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+/**
+ * 给定一个数组 nums，有一个大小为 k 的滑动窗口从数组的最左侧移动到数组的最右侧。你只可以看到在滑动窗口内的 k 个数字。滑动窗口每次只向右移动一位。
+ * 返回滑动窗口中的最大值。
+ *
+ * 进阶：
+ * 你能在线性时间复杂度内解决此题吗？
+ *
+ * 示例:
+ * 输入: nums = [1,3,-1,-3,5,3,6,7], 和 k = 3
+ * 输出: [3,3,5,5,6,7]
+ * 解释:
+ *   滑动窗口的位置                最大值
+ * ---------------               -----
+ * [1  3  -1] -3  5  3  6  7       3
+ *  1 [3  -1  -3] 5  3  6  7       3
+ *  1  3 [-1  -3  5] 3  6  7       5
+ *  1  3  -1 [-3  5  3] 6  7       5
+ *  1  3  -1  -3 [5  3  6] 7       6
+ *  1  3  -1  -3  5 [3  6  7]      7
+ */
 public class Q239MaxSlidingWindow {
 
     /**
-     * 单调递减队列，双端队列实现
+     * 单调递减双端队列
      */
     class DecreasingDeque{
         private LinkedList<Integer> deque;
 
         public DecreasingDeque() {
-            deque = new LinkedList<>();
+            this.deque = new LinkedList<>();
         }
 
-        public void push(int n) {
-            while (!deque.isEmpty() && deque.getLast() < n) {
+        public void push(int val) {
+            while (!deque.isEmpty() && val > deque.peekLast()) {
                 deque.removeLast();
             }
-            deque.addLast(n);
+            deque.addLast(val);
         }
 
-        /**
-         * 需要保证deque非空
-         */
-        public int max () {
-            return deque.getFirst();
-        }
-
-        /**
-         * 需要保证 n 在deque内部
-         */
-        public void pop(int n) {
-            if (!deque.isEmpty() && deque.getFirst() == n) {
+        public void pop(int val) {
+            if (!deque.isEmpty() && deque.peekFirst() == val) {
                 deque.removeFirst();
             }
         }
+
+        public int getMax() {
+            return deque.peekFirst();
+        }
     }
 
-
+    /**
+     * 维护一个单调递减双端队列
+     */
     public int[] maxSlidingWindow(int[] nums, int k) {
         int len = nums.length;
-        if (len == 0) {
-            return new int[0];
-        }
 
         DecreasingDeque deque = new DecreasingDeque();
         int[] res = new int[len - k + 1];
-
         for (int i = 0; i < len; i++) {
-            if (i < k - 1) {  // 先填满窗口的前 k - 1 项
+            if (i < k - 1) {
                 deque.push(nums[i]);
             } else {
-                int idx = i - (k - 1);
                 deque.push(nums[i]);
-                res[idx] = deque.max();
-                deque.pop(nums[idx]);
+                res[i - k + 1] = deque.getMax();
+                deque.pop(nums[i - k + 1]);
             }
         }
         return res;
@@ -114,8 +125,8 @@ public class Q239MaxSlidingWindow {
     @Test
     public void testCase01() {
         int[] nums = {1, 3, -1, -3, 5, 3, 6, 7};
-        int k = 8;
-        int[] res = maxSlidingWindow(nums, k);
+        int k = 3;
+        int[] res = maxSlidingWindow2(nums, k);
 
         System.out.println(Arrays.toString(res));
     }
