@@ -8,12 +8,12 @@ import java.util.List;
 
 public class Q120MinimumTotal {
     /**
-     * 1. 定义动态规划求解问题 dp[i][j]表示到达 第i行第j列的最大和
-     * 2. dp[i][j]; i >= j ;
+     * 1. 定义动态规划求解问题 dp[i][j]表示到达 第i行第j列的最小和
+     * 2. dp[i][j]; i >= j
      * (1) i = 0, j = 0; dp[0][0] = triangle[0][0]
      * (2) i != 0, j == 0; dp[i][0] = dp[i-1][0] + triangle[i][0]
      * (3) i != 0, j == i; dp[i][i] = dp[i-1][i-1] + triangle[i][i]
-     * (4) 其他情况；dp[i][j] = Max(dp[i-1][j], dp[i-1][j-1]) + triangle[i][j]
+     * (4) 其他情况；dp[i][j] = min(dp[i-1][j], dp[i-1][j-1]) + triangle[i][j]
      */
     public int maxTrianglePath(List<List<Integer>> triangle) {
         int len = triangle.size();
