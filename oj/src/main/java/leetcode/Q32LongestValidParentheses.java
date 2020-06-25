@@ -29,7 +29,7 @@ public class Q32LongestValidParentheses {
      *     ......))
      *    若s[i-dp[i-1]-1] == '('
      *    dp[i]=dp[i-1]+dp[i-dp[i-1]-2]+2
-     * 3. 边界条件dp[0]=0,dp[1]=0,
+     * 3. 边界条件dp[0]=0
      */
     public int longestValidParentheses(String s) {
         int len = s.length();
