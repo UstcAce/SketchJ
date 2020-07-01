@@ -19,7 +19,7 @@ public class Binary2Decimal {
         int powCount = 0;
         int i = s.length() - 1;
         while (i >= endIdx) {
-            long temp = (long) Math.pow(2, powCount) * Integer.parseInt(s.substring(i, i + 1));
+            long temp = (long) Math.pow(2, powCount) * (s.charAt(i) - '0');
             if (temp + result < result) {
                 throw new UnsupportedOperationException("Input binary number exceed Long.MAX_VALUE or Long.MIN_VALUE!");
             } else {
