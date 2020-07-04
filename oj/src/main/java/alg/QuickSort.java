@@ -20,11 +20,18 @@ import java.util.Arrays;
  * Then you will get an ascending array. You might need to deal with some corner cases during the implementation.
  */
 public class QuickSort {
+
+    int[] oriIdxArr;
     /**
      * 升序排序
      */
-    public void quickSort(int[] arr) {
+    public int[] quickSort(int[] arr) {
+        oriIdxArr = new int[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            oriIdxArr[i] = i;
+        }
         quickSort(arr, 0, arr.length - 1);
+        return oriIdxArr;
     }
 
     /**
@@ -63,6 +70,10 @@ public class QuickSort {
         int temp = arr[i];
         arr[i] = arr[j];
         arr[j] = temp;
+
+        int temp2 = oriIdxArr[i];
+        oriIdxArr[i] = oriIdxArr[j];
+        oriIdxArr[j] = temp2;
     }
 
     @Test
@@ -82,7 +93,7 @@ public class QuickSort {
     @Test
     public void testCase02() {
         int[] input = {4, 3, 2, 1};
-        quickSort(input);
+        System.out.println(Arrays.toString(quickSort(input)));
         System.out.println(Arrays.toString(input));
     }
 }
