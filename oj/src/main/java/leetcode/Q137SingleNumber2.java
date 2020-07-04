@@ -32,6 +32,26 @@ public class Q137SingleNumber2 {
         return res;
     }
 
+    public int singleNumber2(int[] nums) {
+        // 第i位表示二进制右数第i位出现1的次数
+        int[] count = new int[32];
+        for (int val : nums) {
+            for (int i = 0; i < 32; i++) {
+                count[i] += val & 1;
+                val = val >>> 1;
+            }
+        }
+        int res = 0;
+        int m = 3;
+        for (int i = 0; i < 32; i++) {
+            int bitOne = 1 << i;
+            if (count[i] % m == 1) {
+                res = res | bitOne;
+            }
+        }
+        return res;
+    }
+
     /**
      * <<: 左移补0
      * >>: 带符号右移，正数补0，负数补1
@@ -49,5 +69,11 @@ public class Q137SingleNumber2 {
 
         System.out.println(unSignedMoveRight);
         System.out.println(Integer.toBinaryString(unSignedMoveRight));
+    }
+
+    @Test
+    public void testCase02() {
+        int[] input = {-2,-2,1,1,-3,1,-3,-3,-4,-2};
+        System.out.println(singleNumber2(input));
     }
 }
