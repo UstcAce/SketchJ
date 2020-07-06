@@ -3,21 +3,40 @@ package leetcode;
 import common.ListNode;
 import org.junit.Test;
 
+/**
+ * 反转一个单链表。
+ *
+ * 示例:
+ *
+ * 输入: 1->2->3->4->5->NULL
+ * 输出: 5->4->3->2->1->NULL
+ */
 public class Q206ReverseList {
     public ListNode reverseList(ListNode head) {
-        if (head == null) {
-            return null;
+        if (head == null || head.next == null) {
+            return head;
         }
 
         ListNode pre = null;
-        ListNode curr = head;
-        while (curr != null) {
-            ListNode next = curr.next;
-            curr.next = pre;
-            pre = curr;
-            curr = next;
+        ListNode iter = head;
+        while (iter != null) {
+            ListNode next = iter.next;
+            iter.next = pre;
+            pre = iter;
+            iter = next;
         }
         return pre;
+    }
+
+    public ListNode reverseList2(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode oriNext = head.next;
+        ListNode newNext = reverseList2(head.next);
+        oriNext.next = head;
+        head.next = null;
+        return newNext;
     }
 
     @Test
@@ -38,5 +57,7 @@ public class Q206ReverseList {
         ListNode res = reverseList(node1);
 
         System.out.println(res);
+
+        System.out.println(reverseList2(res));
     }
 }
