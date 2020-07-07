@@ -32,6 +32,15 @@ public class FindMissDuplicateNum {
         return new int[]{missNum, duplicateNum};
     }
 
+    /**
+     * 解法2：
+     * 首先该题中一个数组中的值可以对应数组的一个下标（[1,N] -> [0,N-1]）。
+     * 从前向后遍历数组，取到每一个值，就对对应下标位置的值做乘以-1的操作，
+     * 这样既存储了额外信息，也不会丢失原信息（取绝对值就是原来的值）。
+     * 最后数组中剩两个正值，一个是乘了两次-1，一个是乘了0次-1，
+     * 再稍加判断就可以得到结果
+     */
+
     @Test
     public void testCase01() {
         int[] input = {1, 1, 3, 4};
